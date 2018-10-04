@@ -1,3 +1,4 @@
+require('dotenv').load();
 import express,  { Request, Response, json } from "express";
 import * as winston from "winston";
 import emailRouter from "./routers/email.router";
