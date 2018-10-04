@@ -2,6 +2,7 @@ require('dotenv').load();
 import express,  { Request, Response, json } from "express";
 import * as winston from "winston";
 import emailRouter from "./routers/email.router";
+import * as bodyparser from "body-parser";
 
 
 const PORT = process.env.PORT || 8443;
@@ -18,6 +19,13 @@ export const logger = winston.createLogger({
         new winston.transports.Console()
     ]
 }); 
+
+// configure main application
+// allow json encoded payloads
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({
+    extended: true,
+}))
 
 // Configuring routers
 emailApp.use(emailRouter);
