@@ -4,11 +4,24 @@ import * as winston from "winston";
 import emailRouter from "./routers/email.router";
 import * as bodyparser from "body-parser";
 import { watchForJobs } from "../controller/email.controller";
+import * as mongoose from "mongoose";
+import { connect } from "mongoose";
 
 
 const PORT = process.env.PORT || 8443;
 const VERSION: string = process.env.VERSION || "1.0.0";
 const POLL_DURATION: number = +process.env.POLL_DURATION || 100;
+const MONGO_URI: string = process.env.MONGO_URI;
+
+// Estabilish connection to mongo
+let db = connect(MONGO_URI, {
+    useNewUrlParser: true
+});
+db.then((val) => {
+    logger.info("connected to mongodb at: " +  MONGO_URI);
+}, (reason) => {
+    logger.error("error: ", reason);
+});
 
 export let app: express.Application = express();
 let emailApp: express.Application = express();
@@ -32,10 +45,6 @@ app.use(bodyparser.urlencoded({
 // Configuring routers
 emailApp.use(emailRouter);
 
-app.use("/*", (req: Request, res: Response, next: NextFunction) => {
-    logger.info(req.method + " " + req.hostname + " " + req.path);
-    next();
-});
 // configuring main app with subapps
 app.get("/", (req: Request, res: Response) => {
     res.send({

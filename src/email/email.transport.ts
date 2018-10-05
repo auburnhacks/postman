@@ -14,7 +14,7 @@ interface MailOptions {
     html?: string;
 }
 
-let defaultMailOptions: MailOptions = {
+export let defaultMailOptions: MailOptions = {
     from: "Auburn Hacks <" + SMTP_USER + ">"
 };
 
@@ -25,14 +25,6 @@ let transporter = nodemailer.createTransport({
     auth: {
         user: SMTP_USER,
         pass: SMTP_PASSWORD
-    }
-});
-
-transporter.sendMail(defaultMailOptions, (error, info) => {
-    if (error) {
-        logger.error(error);
-    } else {
-       logger.info(info.messageId);
     }
 });
 
