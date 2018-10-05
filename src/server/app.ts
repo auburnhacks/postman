@@ -1,12 +1,14 @@
 require('dotenv').load();
-import express,  { Request, Response, json } from "express";
+import express,  { Request, Response, json, NextFunction } from "express";
 import * as winston from "winston";
 import emailRouter from "./routers/email.router";
 import * as bodyparser from "body-parser";
+import { watchForJobs } from "../controller/email.controller";
 
 
 const PORT = process.env.PORT || 8443;
 const VERSION: string = process.env.VERSION || "1.0.0";
+const POLL_DURATION: number = +process.env.POLL_DURATION || 100;
 
 export let app: express.Application = express();
 let emailApp: express.Application = express();
@@ -25,11 +27,15 @@ export const logger = winston.createLogger({
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({
     extended: true,
-}))
+}));
 
 // Configuring routers
 emailApp.use(emailRouter);
 
+app.use("/*", (req: Request, res: Response, next: NextFunction) => {
+    logger.info(req.method + " " + req.path); 
+    next();
+});
 // configuring main app with subapps
 app.get("/", (req: Request, res: Response) => {
     res.send({
@@ -38,6 +44,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 app.use("/email", emailApp);
 
+// Start watching for jobs
+watchForJobs(POLL_DURATION);
 
 app.listen(PORT, () => {
     logger.info("Stating postman server on localhost:" + PORT);

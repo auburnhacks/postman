@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
-import { sendOne } from "../../controller/email.controller";
+import { logger } from "../app";
 
 let emailRouter: Router = Router();
 
 emailRouter.get("/", (req: Request, res: Response) => {
-    sendOne("", [], "", "");
-    res.send("");
+    res.send({
+        "response": "starting job",
+    });
 });
 
 export default emailRouter;
