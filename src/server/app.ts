@@ -33,7 +33,7 @@ app.use(bodyparser.urlencoded({
 emailApp.use(emailRouter);
 
 app.use("/*", (req: Request, res: Response, next: NextFunction) => {
-    logger.info(req.method + " " + req.path); 
+    logger.info(req.method + " " + req.hostname + " " + req.path);
     next();
 });
 // configuring main app with subapps
@@ -42,6 +42,12 @@ app.get("/", (req: Request, res: Response) => {
         'version': VERSION,
     })
 });
+
+// rpc endpoints
+app.get("/healthz", (req: Request, res: Response) => {
+    res.status(200).send("ok");
+});
+
 app.use("/email", emailApp);
 
 // Start watching for jobs
