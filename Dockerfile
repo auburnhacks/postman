@@ -1,7 +1,7 @@
 FROM node:10 as base
 WORKDIR /app
 COPY . .
-RUN npm install --save-dev
+RUN npm install
 RUN gulp scripts
 
 FROM node:10-alpine
