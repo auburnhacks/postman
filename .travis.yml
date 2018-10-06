@@ -5,12 +5,11 @@ branches:
 sudo: required
 language: node_js
 node_js:
-  - "iojs"
-  - "10"
+  - "node"
 services:
   - docker
 before_intall:
-  - npm install --save-dev
+  - npm install
 script: |
   (
     gulp scripts
