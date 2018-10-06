@@ -1,10 +1,10 @@
 import * as nodemailer from "nodemailer";
 import { logger } from "../server/app";
 
-const SMTP_HOST: string = process.env.SMTP_HOST || undefined;
-const SMTP_PORT: number = +process.env.SMTP_PORT || undefined;
-const SMTP_USER: string = process.env.SMTP_USER || undefined;
-const SMTP_PASSWORD: string = process.env.SMTP_PASSWORD || undefined;
+const SMTP_HOST: string = process.env.SMTP_HOST;
+const SMTP_PORT: string = process.env.SMTP_PORT;
+const SMTP_USER: string = process.env.SMTP_USER;
+const SMTP_PASSWORD: string = process.env.SMTP_PASSWORD;
 
 interface MailOptions {
     from: string;
@@ -15,25 +15,35 @@ interface MailOptions {
 }
 
 export let defaultMailOptions: MailOptions = {
-    from: "Auburn Hacks <" + SMTP_USER + ">"
+    from: "AuburnHacks Team <" + SMTP_USER + ">"
 };
 
 let transporter = nodemailer.createTransport({
     service: 'gmail',
-    port: SMTP_PORT,
-    secure: true,
     auth: {
         user: SMTP_USER,
         pass: SMTP_PASSWORD
     }
 });
 
-export let sendOne = 
-    (emailType: string,
-    toEmails: Array<string>,
-    subject: string,
-    body: string) : boolean => {
-    logger.info("got parameters");
-
-    return true;
+export let sendOne = (emailType: string, toEmails: Array<string>, subject: string, body: string) : Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        for (let to of toEmails) {
+            let mailOptions = {
+                from: "AuburnHacks <auburnhacks@gmail.com>",
+                to: to,
+                subject: subject,
+                html: body,
+            };
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    logger.error("error sending email: " + error.message);
+                    reject(error);
+                } else {
+                    logger.info("Message sent: " + info.messageId);
+                    resolve(true);
+                }
+            });
+        }
+    });
 }
