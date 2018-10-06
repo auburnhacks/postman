@@ -1,0 +1,25 @@
+branches:
+  only:
+    - master
+    - dev
+sudo: required
+language: node_js
+node_js:
+  - "iojs"
+  - "10"
+services:
+  - docker
+before_intall:
+  - npm install --save-dev
+script: |
+  (
+    set -exuo pipefail
+    gulp scripts
+    docker build -t kirandasika30/postman:$(git rev-parse HEAD) -f Dockerfile .
+    docker build kirandasika30/postman:$(git rev-parse HEAD)
+  )
+notifications:
+  email:
+    - szd0053@auburn.edu
+  on_success: always
+  on_failure: always
