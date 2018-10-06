@@ -3,13 +3,22 @@ import { logger } from "../app";
 import { EmailJob, IEmailJobModel } from "../../model/email.model";
 import { defaultMailOptions } from "../../email/email.transport";
 
+// emailRouter is used as the global router in the email sub application
+// this router is initialized by the emailApp in app.ts
 let emailRouter: Router = Router();
 
+// just a default route lol
 emailRouter.get("/", (req: Request, res: Response) => {
     // TODO: send something useful other than hello
     res.status(200).send("hello");
 });
 
+/*
+    * queue endpoint is triggered when a service wants to queue a
+    * email job that must be executed.
+    * @param json payload 
+    * @return json payload
+*/
 emailRouter.post("/queue", (req: Request, res: Response) => {
     let body = req.body;
 
@@ -34,6 +43,13 @@ emailRouter.post("/queue", (req: Request, res: Response) => {
     });
 });
 
+
+/*
+    * pending endpoint is triggered when a service wants to see the
+    * number of active jobs that are being run by the system at any given time
+    * @param json payload
+    * @return json payload
+*/
 emailRouter.get("/pending", (req: Request, res: Response) => {
     EmailJob
     .find()

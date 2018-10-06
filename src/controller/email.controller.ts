@@ -4,7 +4,8 @@ import { sendOne } from "../email/email.transport";
 
 let { async } = require("async");
 
-
+// watchForJobs is a async that runs throughout the lifecycle of the application.
+// It runs a function to fetch jobs from mongodb and performs actions accordingly
 export let watchForJobs = async (pollTime: number) => {
     logger.info("starting watch poll every " + pollTime + "ms");
     while(true) {
@@ -26,7 +27,8 @@ export let watchForJobs = async (pollTime: number) => {
     }
 }
 
-
+// fetchJobs is function that queries mongodb and filters the set and returns
+// a promise that only contains jobs that are pending
 let fetchJobs = () : Promise<Array<IEmailJobModel>> => {
     return new Promise<Array<IEmailJobModel>>((resolve, reject) => {
         EmailJob

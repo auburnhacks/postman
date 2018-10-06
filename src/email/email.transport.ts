@@ -1,6 +1,7 @@
 import * as nodemailer from "nodemailer";
 import { logger } from "../server/app";
 
+// all required constants that are needed by nodemailer to run perfecto
 const SMTP_HOST: string = process.env.SMTP_HOST;
 const SMTP_PORT: string = process.env.SMTP_PORT;
 const SMTP_USER: string = process.env.SMTP_USER;
@@ -19,6 +20,7 @@ export let defaultMailOptions: MailOptions = {
     from: "AuburnHacks Team <" + SMTP_USER + ">"
 };
 
+// transporter is the default email transport used by the application
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -27,6 +29,14 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+/*
+    * sendOne is a function that sends an email with the given parameters.
+    @param emailType string
+    @param toEmails Array<string>
+    @param subject string
+    @param body string
+    @return Promise<boolean>
+*/
 export let sendOne = (emailType: string, toEmails: Array<string>, subject: string, body: string) : Promise<boolean> => {
     return new Promise((resolve, reject) => {
         for (let to of toEmails) {
