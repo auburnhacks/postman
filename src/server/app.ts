@@ -63,5 +63,5 @@ app.use("/email", emailApp);
 watchForJobs(POLL_DURATION);
 
 app.listen(PORT, () => {
-    logger.info("Stating postman server on localhost:" + PORT);
+    logger.info("starting postman server on localhost:" + PORT);
 });
