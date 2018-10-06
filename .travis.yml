@@ -15,6 +15,7 @@ script: |
   (
     set -exuo pipefail
     gulp scripts
+    docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     docker build -t kirandasika30/postman:$(git rev-parse HEAD) -f Dockerfile .
     docker build kirandasika30/postman:$(git rev-parse HEAD)
   )
