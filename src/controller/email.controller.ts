@@ -18,9 +18,8 @@ export let watchForJobs = async (pollTime: number) => {
                 let isSent = await sendOne("", job.toEmails,job.subject, job.text);
                 if (isSent){
                     logger.info("successfully sent email to: " + job.toEmails);
-                    await EmailJob.findByIdAndUpdate(job.id, {pending: false});
+                    await EmailJob.findOneAndUpdate({_id: job.id}, {$set: { pending: false }});
                 }
-
             }
         }
         await rest(pollTime);

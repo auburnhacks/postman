@@ -5,6 +5,7 @@ const SMTP_HOST: string = process.env.SMTP_HOST;
 const SMTP_PORT: string = process.env.SMTP_PORT;
 const SMTP_USER: string = process.env.SMTP_USER;
 const SMTP_PASSWORD: string = process.env.SMTP_PASSWORD;
+const SMTP_CONTACT: string = process.env.SMTP_CONTACT;
 
 interface MailOptions {
     from: string;
@@ -30,10 +31,10 @@ export let sendOne = (emailType: string, toEmails: Array<string>, subject: strin
     return new Promise((resolve, reject) => {
         for (let to of toEmails) {
             let mailOptions = {
-                from: "AuburnHacks <auburnhacks@gmail.com>",
+                from: SMTP_CONTACT,
                 to: to,
                 subject: subject,
-                html: body,
+                text: body
             };
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
