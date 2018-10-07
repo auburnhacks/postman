@@ -10,4 +10,5 @@ WORKDIR /app
 COPY --from=base /app/dist ./dist/
 COPY . .
 RUN npm install --only=prod
+ENV NODE_ENV=production
 ENTRYPOINT [ "node", "dist/server/app.js" ]

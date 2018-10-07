@@ -1,4 +1,3 @@
-require('dotenv').load();
 import express,  { Request, Response, json, NextFunction } from "express";
 import * as winston from "winston";
 import emailRouter from "./routers/email.router";
@@ -6,7 +5,27 @@ import * as bodyparser from "body-parser";
 import { watchForJobs } from "../controller/email.controller";
 import * as mongoose from "mongoose";
 import { connect } from "mongoose";
+import * as fs from "fs";
+import * as path from "path";
 
+// helper functions
+let downloadEnvVariablesSync = (): void => {
+    // get the value of the data
+    let envData: string = process.env.ENV_SECRETS;
+    if (envData == undefined) {
+        console.log("could not locate secrets from kubernetes");
+        process.exit(1);
+    }  
+    let envFilePath:string = path.join(__dirname, '.env');
+    fs.writeFileSync(envFilePath, 'utf-8');    
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').load();
+} else {
+    downloadEnvVariablesSync();
+    require('dotenv').load();
+}
 
 // default constants that are required for the application to start normally
 
@@ -75,6 +94,15 @@ app.use("/email", emailApp);
 watchForJobs(POLL_DURATION);
 
 // bind the application to the port specified and allow incoming connections
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     logger.info("starting postman server on localhost:" + PORT);
+});
+
+// graceful shutdown
+process.on('SIGTERM', () =>{
+    server.close(() => {
+        mongoose.connection
+        .close()
+        .then(() => process.exit(0), ()=> process.exit(1));
+    });
 });
