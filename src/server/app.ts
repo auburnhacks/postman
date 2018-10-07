@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 // helper functions
 let downloadEnvVariablesSync = (): string => {
     console.info("downloading secrets: " + __dirname);
@@ -28,8 +30,6 @@ import * as bodyparser from "body-parser";
 import { watchForJobs } from "../controller/email.controller";
 import * as mongoose from "mongoose";
 import { connect } from "mongoose";
-import * as fs from "fs";
-import * as path from "path";
 
 // default constants that are required for the application to start normally
 
