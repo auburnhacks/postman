@@ -2,6 +2,7 @@ branches:
   only:
     - master
     - dev
+    - jwt
 sudo: required
 language: node_js
 node_js:
