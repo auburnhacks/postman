@@ -1,13 +1,3 @@
-import express,  { Request, Response, json, NextFunction } from "express";
-import * as winston from "winston";
-import emailRouter from "./routers/email.router";
-import * as bodyparser from "body-parser";
-import { watchForJobs } from "../controller/email.controller";
-import * as mongoose from "mongoose";
-import { connect } from "mongoose";
-import * as fs from "fs";
-import * as path from "path";
-
 // helper functions
 let downloadEnvVariablesSync = (): string => {
     console.info("downloading secrets: " + __dirname);
@@ -23,13 +13,23 @@ let downloadEnvVariablesSync = (): string => {
     fs.writeFileSync(envFilePath, envData);
     return envFilePath;   
 }
-
+console.log("loading env variables...");
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
 } else {
     let envFilePath:string = downloadEnvVariablesSync();
     require('dotenv').config({path: envFilePath});
 }
+
+import express,  { Request, Response, json, NextFunction } from "express";
+import * as winston from "winston";
+import emailRouter from "./routers/email.router";
+import * as bodyparser from "body-parser";
+import { watchForJobs } from "../controller/email.controller";
+import * as mongoose from "mongoose";
+import { connect } from "mongoose";
+import * as fs from "fs";
+import * as path from "path";
 
 // default constants that are required for the application to start normally
 
