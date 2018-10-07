@@ -30,6 +30,7 @@ import * as bodyparser from "body-parser";
 import { watchForJobs } from "../controller/email.controller";
 import * as mongoose from "mongoose";
 import { connect } from "mongoose";
+import * as jwt from "jsonwebtoken";
 
 // default constants that are required for the application to start normally
 
@@ -41,6 +42,10 @@ const VERSION: string = process.env.VERSION || "1.0.0";
 const POLL_DURATION: number = +process.env.POLL_DURATION || 100;
 // mongo uri is a constant 
 const MONGO_URI: string = process.env.MONGO_URI;
+// jwt secret is the secret used by the jsonwebtoken library for siging and issuing tokens
+const JWT_SECRET: string = process.env.JWT_SECRET;
+
+var users = Array();
 
 // Estabilish connection to mongo
 let db = connect(MONGO_URI, {
@@ -70,6 +75,47 @@ export const logger = winston.createLogger({
     ]
 }); 
 
+var isVerified = (req: Request, res: Response, next: NextFunction) => {
+    let authHeader: string = req.headers['authorization'];
+    if (authHeader == undefined) {
+        res.status(403).send({
+            error: "no authenication header found"
+        });
+        return
+    }
+    let token = authHeader.split(' ');
+    jwt.verify(token[1], JWT_SECRET, (error, data) => {
+        if (error) {
+            res.status(403).send({
+                "error": "accedding forbidden endpoint " + req.method
+            });
+            return
+        }
+        next();
+    });
+};
+
+let loadVerfiedUsers = (userFilePath: string) => {
+    let userData: string = fs.readFileSync(userFilePath, "utf-8");
+    let parsedUsers = JSON.parse(userData);
+    for (let u of parsedUsers.users) {
+        users.push(u as Map<string, any>);
+    }
+};
+
+let verifyUser = (username: string, password: string): boolean => {
+    for (let user of users) {
+        if (user['username'] == username && user['password'] == password) {
+            return true;
+        }
+    }
+    return false;
+};
+
+// load all verfified users
+loadVerfiedUsers(path.join(__dirname, '../../users.json'));
+console.info(JSON.stringify(users));
+
 // configure main application
 // allow json encoded payloads
 app.use(bodyparser.json());
@@ -78,13 +124,26 @@ app.use(bodyparser.urlencoded({
 }));
 
 // Configuring routers
-emailApp.use(emailRouter);
+emailApp.use(isVerified, emailRouter);
 
 // configuring main app with subapps
 app.get("/", (req: Request, res: Response) => {
     res.send({
         'version': VERSION,
     })
+});
+
+// authentication endpoints
+app.post("/token", (req: Request, res: Response) => {
+    let userData = req.body;
+    if (verifyUser(userData.username, userData.password)) {
+        let token: string = jwt.sign({userData}, JWT_SECRET);
+        res.send({token});
+    } else {
+        res.status(403).send({
+            error: "unable to verify user"
+        })
+    }
 });
 
 // rpc endpoints
