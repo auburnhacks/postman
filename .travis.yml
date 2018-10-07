@@ -13,9 +13,11 @@ before_intall:
 script: |
   (
     gulp scripts
+    git_sha=$(git rev-parse HEAD)
+    git_branch=$(git rev-parse --abbrev-ref HEAD)
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    docker build -t kirandasika30/postman:$(git rev-parse HEAD) -f Dockerfile .
-    docker push kirandasika30/postman:$(git rev-parse HEAD)
+    docker build -t kirandasika30/postman:$git_sha-$git_branch -f Dockerfile .
+    docker push kirandasika30/postman:$git_sha-$git_branch
   )
 notifications:
   email:
