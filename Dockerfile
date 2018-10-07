@@ -1,5 +1,13 @@
+FROM node:10 as base
+WORKDIR /app
+COPY . .
+RUN npm install --only=dev
+RUN npm install -g gulp
+RUN gulp scripts
+
 FROM node:10-alpine
 WORKDIR /app
-COPY ./dist ./
-RUN npm install -g --only=prod
+COPY --from=base /app/dist ./dist/
+COPY . .
+RUN npm install --only=prod
 ENTRYPOINT [ "node", "dist/server/app.js" ]
