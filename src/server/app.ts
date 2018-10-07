@@ -20,7 +20,7 @@ let downloadEnvVariablesSync = (): string => {
         process.exit(1);
         return undefined;
     }  
-    fs.writeFileSync(envFilePath, 'utf-8');
+    fs.writeFileSync(envFilePath, envData);
     return envFilePath;   
 }
 
