@@ -10,10 +10,11 @@ import * as path from "path";
 
 // helper functions
 let downloadEnvVariablesSync = (): void => {
+    console.info("downloading secrets");
     // get the value of the data
     let envData: string = process.env.ENV_SECRETS;
     if (envData == undefined) {
-        console.log("could not locate secrets from kubernetes");
+        console.error("could not locate secrets from kubernetes");
         process.exit(1);
     }  
     let envFilePath:string = path.join(__dirname, '.env');
