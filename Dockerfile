@@ -1,7 +1,7 @@
 FROM node:10 as base
 WORKDIR /app
 COPY . .
-RUN npm install --only=dev
+RUN npm install
 RUN npm install -g gulp
 RUN gulp scripts
 
