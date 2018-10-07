@@ -9,7 +9,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // helper functions
-let downloadEnvVariablesSync = (): void => {
+let downloadEnvVariablesSync = (): string => {
     console.info("downloading secrets: " + __dirname);
     // get the value of the data
     let envFilePath:string = path.join(__dirname, '../../.env');
@@ -18,15 +18,17 @@ let downloadEnvVariablesSync = (): void => {
     if (envData == undefined) {
         console.error("could not locate secrets from kubernetes");
         process.exit(1);
+        return undefined;
     }  
-    fs.writeFileSync(envFilePath, 'utf-8');    
+    fs.writeFileSync(envFilePath, 'utf-8');
+    return envFilePath;   
 }
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
 } else {
-    downloadEnvVariablesSync();
-    require('dotenv').load();
+    let envFilePath:string = downloadEnvVariablesSync();
+    require('dotenv').config({path: envFilePath});
 }
 
 // default constants that are required for the application to start normally
