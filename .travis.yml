@@ -20,6 +20,5 @@ script: |
 notifications:
   email:
     - szd0053@tigermail.auburn.edu
-    - tzj0019@tigermail.auburn.edu
   on_success: always
   on_failure: always
