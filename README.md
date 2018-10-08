@@ -1,5 +1,8 @@
 # Postman Server [![Build Status](https://travis-ci.org/auburnhacks/postman.svg?branch=master)](https://travis-ci.org/auburnhacks/postman) 
 
+## What is Postman?
+Postman server attempts to solve half the problem of sending marketing emails and followup emails in an effcient way. Postman server is an HTTP server running in the cloud that exposes a REST API that can be queried. Only admis have access to view the WebUI and query the API to send emails. If you are not an admin for AuburnHacks you are on the wrong repository.
+
 ## CI Branches
 * master : [![Build Status](https://travis-ci.org/auburnhacks/postman.svg?branch=master)](https://travis-ci.org/auburnhacks/postman) 
 * dev    : [![Build Status](https://travis-ci.org/auburnhacks/postman.svg?branch=dev)](https://travis-ci.org/auburnhacks/postman)
