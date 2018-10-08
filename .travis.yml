@@ -13,12 +13,14 @@ before_intall:
   - npm install
 script: |
   (
+    set -exuo pipefail
     gulp scripts
     git_sha=$(git rev-parse HEAD)
     git_branch=$(git rev-parse --abbrev-ref HEAD)
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    docker build -t kirandasika30/postman:$git_sha -f Dockerfile .
-    docker push kirandasika30/postman:$git_sha
+    docker build -t $DOCKER_USERNAME/postman:$git_sha -t $DOCKER_USERNAME/postman:latest -f Dockerfile .
+    docker push $DOCKER_USERNAME/postman:$git_sha
+    docker push $DOCKER_USERNAME/postman:latest
   )
 notifications:
   email:
