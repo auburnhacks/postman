@@ -68,7 +68,7 @@ let emailApp: express.Application = express();
 // create the global logger with winston
 // logger is used throughout the application for debugging purposes
 export const logger = winston.createLogger({
-    level: 'debug',
+    level: process.env.LOG_LEVEL || 'debug',
     format: winston.format.simple(),
     transports:[
         new winston.transports.Console()
@@ -114,7 +114,7 @@ let verifyUser = (username: string, password: string): boolean => {
 
 // load all verfified users
 loadVerfiedUsers(path.join(__dirname, '../../users.json'));
-console.info(JSON.stringify(users));
+logger.debug(JSON.stringify(users));
 
 // configure main application
 // allow json encoded payloads
@@ -125,6 +125,15 @@ app.use(bodyparser.urlencoded({
 
 // Configuring routers
 emailApp.use(isVerified, emailRouter);
+
+if (process.env.NODE_ENV !== "production") {
+    app.use("/*", (req: Request, res: Response, next: NextFunction) => {
+        res.append('Access-Control-Allow-Origin', ['*']);
+        res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+        res.append('Access-Control-Allow-Headers', 'Content-Type');
+        next();
+    });
+}
 
 // configuring main app with subapps
 app.get("/", (req: Request, res: Response) => {
