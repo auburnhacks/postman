@@ -13,8 +13,8 @@ To install postman server follow the steps below
 git clone https://github.com/auburnhacks/postman.git
 
 cd postman
-npm install --save // Install production dependencies
-npm install --save-dev // Install development dependencies
+# Install required dev/prod dependencies
+npm install 
 ```
 
 ### Running the server
