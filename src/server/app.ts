@@ -113,8 +113,10 @@ let verifyUser = (username: string, password: string): boolean => {
 };
 
 // load all verfified users
-loadVerfiedUsers(path.join(__dirname, '../../users.json'));
-logger.debug(JSON.stringify(users));
+if (process.env.NODE_ENV !== 'production') {
+    loadVerfiedUsers(path.join(__dirname, '../../users.json'));
+    logger.debug(JSON.stringify(users));
+}
 
 // configure main application
 // allow json encoded payloads
