@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { logger } from "../app";
 import { EmailJob, IEmailJobModel } from "../../model/email.model";
-import { defaultMailOptions } from "../../email/email.transport";
+import { defaultMailOptions, sendOne } from "../../email/email.transport";
 
 // emailRouter is used as the global router in the email sub application
 // this router is initialized by the emailApp in app.ts
@@ -60,6 +60,19 @@ emailRouter.get("/pending", (req: Request, res: Response) => {
     }, (reason) => {
         res.status(500).send(reason);
     });
+});
+
+/* 
+    * send an email right now
+    @param json payload containing information for an email
+    @return email sent confirmation
+*/
+emailRouter.post("/send_now", (req: Request, res:Response) => {
+    let toEmails = req.body.to_emails as Array<string>;
+    let subject: string = req.body.subject || "[" + process.env.HACKATHON_NAME + "] - Update";
+    let emailText: string = req.body.email_text || "";
+    sendOne("", toEmails, subject, emailText)
+    .then(() => res.status(201).send(true), () => res.status(500).send(false));
 });
 
 export default emailRouter;

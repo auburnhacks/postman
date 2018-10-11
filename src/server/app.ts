@@ -124,7 +124,9 @@ app.use(bodyparser.urlencoded({
 }));
 
 // Configuring routers
-emailApp.use(isVerified, emailRouter);
+// emailApp.use(isVerified, emailRouter);
+// TODO: (kirandasika98) revert back to JWT
+emailApp.use(emailRouter);
 
 if (process.env.NODE_ENV !== "production") {
     app.use("/*", (req: Request, res: Response, next: NextFunction) => {
