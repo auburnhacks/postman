@@ -39,4 +39,4 @@
                 "email_text": "some kewl text"
             }
         ```
-    - This endpoint should be used with caution as there is not retry policies.
+    - This endpoint should be used with caution as there is no retry policy
