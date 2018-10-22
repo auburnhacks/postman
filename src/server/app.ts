@@ -31,6 +31,7 @@ import { watchForJobs } from "../controller/email.controller";
 import * as mongoose from "mongoose";
 import { connect } from "mongoose";
 import * as jwt from "jsonwebtoken";
+import quillRouter from "./routers/quill.router";
 
 // default constants that are required for the application to start normally
 
@@ -64,6 +65,8 @@ db.then((val) => {
 export let app: express.Application = express();
 // emailApp is a express sub application used to serve the email routes
 let emailApp: express.Application = express();
+// quillApp is an express sub application to serve as a proxy to the quill mongoDB
+let quillApp: express.Application = express();
 
 // create the global logger with winston
 // logger is used throughout the application for debugging purposes
@@ -129,6 +132,7 @@ app.use(bodyparser.urlencoded({
 // emailApp.use(isVerified, emailRouter);
 // TODO: (kirandasika98) revert back to JWT
 emailApp.use(emailRouter);
+quillApp.use(quillRouter);
 
 if (process.env.NODE_ENV !== "production") {
     app.use("/*", (req: Request, res: Response, next: NextFunction) => {
@@ -165,6 +169,7 @@ app.get("/healthz", (req: Request, res: Response) => {
 });
 
 app.use("/email", emailApp);
+app.use("/quill", quillApp);
 
 // Start watching for jobs
 watchForJobs(POLL_DURATION);
