@@ -9,12 +9,19 @@ let { async } = require("async");
 export let watchForJobs = async (pollTime: number) => {
     logger.info("starting watch poll every " + pollTime + "ms");
     while(true) {
+        logger.debug("fetching jobs from mongodb...");
         let pendingJobs = await fetchJobs();
         if (pendingJobs.length > 0) {
             logger.info("picked up " + pendingJobs.length + " jobs");
             while (pendingJobs.length != 0) {
                 let job = pendingJobs.pop();
                 
+                // delete the job if no emails are present and continue
+                if (job.toEmails.length == 0) {
+                    logger.info("found job with 0 to_emails, deleting job with id " + job.id);
+                    await EmailJob.findOneAndDelete({_id: job.id});
+                    continue;
+                }
                 // calling email transport
                 let isSent = await sendOne("", job.toEmails,job.subject, job.text);
                 if (isSent){
