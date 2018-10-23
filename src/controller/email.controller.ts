@@ -2,8 +2,6 @@ import { logger } from "../server/app";
 import { IEmailJobModel, EmailJob } from "../model/email.model";
 import { sendOne } from "../email/email.transport";
 
-let { async } = require("async");
-
 // watchForJobs is a async that runs throughout the lifecycle of the application.
 // It runs a function to fetch jobs from mongodb and performs actions accordingly
 export let watchForJobs = async (pollTime: number) => {
