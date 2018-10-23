@@ -14,7 +14,20 @@ let downloadEnvVariablesSync = (): string => {
     }  
     fs.writeFileSync(envFilePath, envData);
     return envFilePath;   
-}
+};
+
+let downloadPostmanAdminsSync = () : string => {
+    console.info("downloading users: " + __dirname);
+    let adminFilePath: string  = path.join(__dirname, '../../users.json');
+    let adminData: string = process.env.USERS_JSON;
+    if (adminData == undefined) {
+        console.error("could not locate admin secrets");
+        process.exit(1);
+    }
+    fs.writeFileSync(adminFilePath, adminData);
+    return adminFilePath;
+};
+
 console.log("loading env variables...");
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
@@ -119,6 +132,11 @@ let verifyUser = (username: string, password: string): boolean => {
 if (process.env.NODE_ENV !== 'production') {
     loadVerfiedUsers(path.join(__dirname, '../../users.json'));
     logger.debug(JSON.stringify(users));
+} else {
+    // in production download secrets first
+    let adminUsersFile: string = downloadPostmanAdminsSync();
+    logger.info("loading all admin data");
+    loadVerfiedUsers(adminUsersFile);
 }
 
 // configure main application
