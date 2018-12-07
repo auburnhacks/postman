@@ -16,15 +16,19 @@ export let watchForJobs = async (pollTime: number) => {
                 
                 // delete the job if no emails are present and continue
                 if (job.toEmails.length == 0) {
-                    logger.info("found job with 0 to_emails, deleting job with id " + job.id);
+                    // TODO: this check should be removed in the future
+                    logger.info("found job with no to_email, deleting job" 
+                    + "with id: " + job.id);
                     await EmailJob.findOneAndDelete({_id: job.id});
                     continue;
                 }
                 // calling email transport
+                // Change this to async version with callbacks
                 let isSent = await sendOne("", job.toEmails,job.subject, job.text);
                 if (isSent){
                     logger.info("successfully sent email to: " + job.toEmails);
-                    await EmailJob.findOneAndUpdate({_id: job.id}, {$set: { pending: false }});
+                    await EmailJob.findOneAndUpdate({_id: job.id},
+                        {$set: { pending: false }});
                 }
             }
         }

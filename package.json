@@ -8,7 +8,8 @@
     "build-ts": "tsc",
     "serve": "node dist/server/app.js",
     "start": "npm run build-ts && npm run serve",
-    "clean": "rm -rf dist/"
+    "clean": "rm -rf dist/",
+    "watch": "gulp server"
   },
   "repository": {
     "type": "git",
