@@ -26,7 +26,8 @@ let transporter = nodemailer.createTransport({
     auth: {
         user: SMTP_USER,
         pass: SMTP_PASSWORD
-    }
+    },
+    pool: true,
 });
 
 /*
@@ -52,9 +53,14 @@ export let sendOne = (emailType: string, toEmails: Array<string>, subject: strin
                     reject(error);
                 } else {
                     logger.info("Message sent: " + info.messageId);
-                    resolve(true);
                 }
             });
         }
+        resolve(true);
     });
 }
+
+
+let sleep = (duration: number) => {
+    return new Promise(resolve => setInterval(resolve, duration));
+};
