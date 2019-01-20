@@ -1,6 +1,6 @@
 import { logger } from "../server/app";
 import { IEmailJobModel, EmailJob } from "../model/email.model";
-import { sendOne } from "../email/email.transport";
+import { sendOne, sendOneHTML } from "../email/email.transport";
 
 // watchForJobs is a async that runs throughout the lifecycle of the application.
 // It runs a function to fetch jobs from mongodb and performs actions accordingly
@@ -24,7 +24,13 @@ export let watchForJobs = async (pollTime: number) => {
                 }
                 // calling email transport
                 // Change this to async version with callbacks
-                let isSent = await sendOne("", job.toEmails,job.subject, job.text);
+                let isSent: boolean = false;
+                if (job.isHTML) {
+                    isSent = await sendOneHTML(job.toEmails, job.subject,
+                            job.text);
+                } else {
+                    isSent = await sendOne("", job.toEmails,job.subject, job.text);
+                }
                 if (isSent){
                     logger.info("successfully sent email to: " + job.toEmails);
                     await EmailJob.findOneAndUpdate({_id: job.id},

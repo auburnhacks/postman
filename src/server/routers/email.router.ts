@@ -25,13 +25,15 @@ emailRouter.post("/queue", (req: Request, res: Response) => {
     let toEmails: Array<string> = body.to_emails as Array<string>;
     let subject: string = body.subject as string || "AuburnHacks 2019";
     let emailText: string = body.email_text as string || "";
+    let isHTML: boolean = body.is_html as boolean || false;
 
     // save this to mongodb and then return
     var newJob = new EmailJob({
         from: defaultMailOptions.from,
         toEmails: toEmails,
         subject: subject,
-        text: emailText
+        text: emailText,
+        isHTML: isHTML
     });
 
     newJob

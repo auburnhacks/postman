@@ -1,5 +1,6 @@
 import * as nodemailer from "nodemailer";
 import { logger } from "../server/app";
+import { Options } from "nodemailer/lib/mailer";
 
 // all required constants that are needed by nodemailer to run perfecto
 const SMTP_HOST: string = process.env.SMTP_HOST;
@@ -47,6 +48,28 @@ export let sendOne = (emailType: string, toEmails: Array<string>, subject: strin
                 subject: subject,
                 text: body
             };
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    logger.error("error sending email: " + error.message);
+                    reject(error);
+                } else {
+                    logger.info("Message sent: " + info.messageId);
+                }
+            });
+        }
+        resolve(true);
+    });
+}
+
+export let sendOneHTML = (toEmails: Array<string>, subject: string, body: string): Promise<boolean> => {
+    return new Promise<boolean>((resolve, reject) => {
+        for (let to of toEmails) {
+            let mailOptions: Options = {
+                from: SMTP_CONTACT,
+                to: to,
+                subject: subject,
+                html: body,
+            }
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     logger.error("error sending email: " + error.message);

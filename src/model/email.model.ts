@@ -12,6 +12,9 @@ export interface IEmailJobModel extends Document {
     text: string,
     // pending is a boolean that signifies whether a job still pending to be run
     pending: boolean,
+    // isHTML is a boolean that indicates whether a email has to sent out
+    // in HTML mode instead of plain text.
+    isHTML: boolean
 }
 
 var emailJobSchema = new Schema({
@@ -27,6 +30,10 @@ var emailJobSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    isHTML: {
+        type: Boolean,
+        default: false
+    }
 });
 
 // EmailJob is the exported class used by the application to run mongodb queies against this schema
